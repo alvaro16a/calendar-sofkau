@@ -40,7 +40,7 @@ public class SchedulerService {
                     Stream<String> duration = getDurationOf(programa);
                     return Flux.fromStream(duration);
                 })
-                .switchIfEmpty(Mono.error(new RuntimeException("El programa acadenico no existe")))
+                .switchIfEmpty(Mono.error(new RuntimeException("El programa academico no existe")))
                 .map(toProgramDate(startDate, endDate, pivot[0], index));
 
     }
