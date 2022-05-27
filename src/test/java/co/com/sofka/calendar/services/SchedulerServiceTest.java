@@ -13,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -23,7 +25,7 @@ import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class SchedulerServiceTest {
-
+    private static final Logger log = LoggerFactory.getLogger(SchedulerServiceTest.class);
     @InjectMocks
     SchedulerService schedulerService;
 
@@ -34,6 +36,7 @@ class SchedulerServiceTest {
     @Test
         //TODO: modificar el test para que el act sea reactivo, usando stepverifier
     void generateCalendar() {
+
         var programId = "xxxx";
         var startDate = LocalDate.of(2022, 1, 1);
 
@@ -42,20 +45,30 @@ class SchedulerServiceTest {
         Mockito.when(repository.findById(programId)).thenReturn(Mono.just(program));
         //TODO: hacer una subscripción de el servicio reactivo
         Flux<ProgramDate> response = schedulerService.generateCalendar(programId, startDate);
-        
 
-//       StepVerifier.create(response)
-//              .expectNextCount(13)
-//               .verifyComplete();
-        
+        response.subscribe(respuesta -> log.info(respuesta.getCategoryName()));
+
+
         StepVerifier.create(response)
-                .expectNextMatches(respuesta ->  getSnapResult().equals(new Gson().toJson(respuesta)))
+                .expectNextCount(13)
+                .equals(getSnapResult().equals(new Gson().toJson(response)));
+
+        StepVerifier.create(response)
+                .expectNextMatches(respuesta -> respuesta.getCategoryName().equals("Principios"))
+                .expectNextMatches(respuesta -> respuesta.getCategoryName().equals("Principios"))
+                .expectNextMatches(respuesta -> respuesta.getCategoryName().equals("Bases"))
+                .expectNextMatches(respuesta -> respuesta.getCategoryName().equals("Bases"))
+                .expectNextMatches(respuesta -> respuesta.getCategoryName().equals("Fundamentos"))
+                .expectNextMatches(respuesta -> respuesta.getCategoryName().equals("Fundamentos"))
+                .expectNextMatches(respuesta -> respuesta.getCategoryName().equals("Fundamentos"))
+                .expectNextMatches(respuesta -> respuesta.getCategoryName().equals("Fundamentos"))
+                .expectNextMatches(respuesta -> respuesta.getCategoryName().equals("Fundamentos avazandos"))
+                .expectNextMatches(respuesta -> respuesta.getCategoryName().equals("Fundamentos avazandos"))
+                .expectNextMatches(respuesta -> respuesta.getCategoryName().equals("Fundamentos avazandos"))
+                .expectNextMatches(respuesta -> respuesta.getCategoryName().equals("Fundamentos avazandos"))
+                .expectNextMatches(respuesta -> respuesta.getCategoryName().equals("Fundamentos avazandos"))
                 .verifyComplete();
-
-
-
-//        Assertions.assertEquals(getSnapResult(), new Gson().toJson(response));//TODO: hacer de otro modo
-//        Mockito.verify(repository).findById(programId);
+        Mockito.verify(repository).findById(programId);
     }
 /*
     @Test
